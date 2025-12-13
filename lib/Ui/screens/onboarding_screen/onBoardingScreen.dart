@@ -65,7 +65,7 @@ class onBoardingScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacementNamed(
                         context,
-                        AppRoute.RegisterScreen.name,
+                        AppRoute.AuthScreen.name,
                       );
                     },
                     child: const Text(

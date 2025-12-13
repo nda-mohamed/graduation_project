@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'Ui/screens/auth_screen/AuthScreen.dart';
 import 'Ui/screens/login_screen/LoginScreen.dart';
 import 'Ui/screens/onboarding_screen/onBoardingScreen.dart';
-import 'Ui/screens/onboarding_screen/splash_screen/splashScreen.dart';
 import 'Ui/screens/register_screen/RegisterScreen.dart';
+import 'Ui/screens/splash_screen/splashScreen.dart';
 import 'core/routes/AppRoutes.dart';
 import 'package:rive/rive.dart';
 
@@ -23,10 +24,11 @@ class MyApp extends StatelessWidget {
       title: 'AgreVerse',
       theme: ThemeData.dark(),
 
-      initialRoute: AppRoute.onBoardingScreen.name,
+      initialRoute: AppRoute.splashScreen.name,
       routes: {
-        //AppRoute.splashScreen.name: (_) => splashScreen(),
+        AppRoute.splashScreen.name: (_) => splashScreen(),
         AppRoute.onBoardingScreen.name: (_) => onBoardingScreen(),
+        AppRoute.AuthScreen.name: (_) => AuthScreen(),
         AppRoute.LoginScreen.name: (_) => LoginScreen(),
         AppRoute.RegisterScreen.name: (_) => RegisterScreen(),
       },
