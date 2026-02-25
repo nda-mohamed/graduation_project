@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "384637728273",
+    "project_id": "agrinova-bcbb9",
+    "storage_bucket": "agrinova-bcbb9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384637728273:android:54f68f627c6b93f88963b0",
+        "android_client_info": {
+          "package_name": "com.example.graduation_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd7LPITNqDWxRTWN2cNdEo-Z93ObAN7KY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

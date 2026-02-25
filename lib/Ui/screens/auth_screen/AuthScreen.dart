@@ -56,9 +56,27 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: PageView(
                   controller: _pageController,
                   onPageChanged: _onPageChanged,
-                  children: const [LoginScreen(), RegisterScreen()],
+                  children: [
+                    const LoginScreen(),
+                    RegisterScreen(
+                      onRegisterSuccess: () {
+                        _pageController.animateToPage(
+                          0, // صفحة Login
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
+              // Expanded(
+              //   child: PageView(
+              //     controller: _pageController,
+              //     onPageChanged: _onPageChanged,
+              //     children: const [LoginScreen(), RegisterScreen()],
+              //   ),
+              // ),
             ],
           ),
         ),

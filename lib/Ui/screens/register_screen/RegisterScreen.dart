@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../core/app_theme/AppColors.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  final VoidCallback? onRegisterSuccess;
+  const RegisterScreen({Key? key, this.onRegisterSuccess}) : super(key: key);
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -28,8 +30,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister() {
-    print('Register: ${emailController.text}');
+  void _handleRegister() async {
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      print("User created: ${credential.user?.email}");
+
+
+      widget.onRegisterSuccess?.call();
+
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+
+      if (e.code == 'weak-password') {
+        message = 'Password is too weak';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'Email already exists';
+      } else {
+        message = e.message ?? 'Registration failed';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
   }
 
   @override
@@ -41,6 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const FieldLabel(label: 'Email Address'),
           const SizedBox(height: 8),
           AuthTextField(
+            keyboardType: TextInputType.emailAddress,
             controller: emailController,
             hint: 'Enter your Email Address',
             icon: Icons.email_outlined,
@@ -49,6 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const FieldLabel(label: 'User Name'),
           const SizedBox(height: 8),
           AuthTextField(
+            keyboardType: TextInputType.name,
             controller: usernameController,
             hint: 'Enter your User name',
             icon: Icons.person_outline,
@@ -57,6 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const FieldLabel(label: 'Password'),
           const SizedBox(height: 8),
           AuthTextField(
+            keyboardType: TextInputType.visiblePassword,
             controller: passwordController,
             hint: 'Enter your Password',
             icon: Icons.lock_outline,
@@ -68,6 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const FieldLabel(label: 'Confirm Password'),
           const SizedBox(height: 8),
           AuthTextField(
+            keyboardType: TextInputType.visiblePassword,
             controller: confirmPasswordController,
             hint: 'Enter your Confirm Password',
             icon: Icons.lock_outline,

@@ -108,6 +108,7 @@ class AuthTextField extends StatefulWidget {
     this.isPassword = false,
     this.showPassword = false,
     this.onTogglePassword,
+    required TextInputType keyboardType,
   }) : super(key: key);
 
   @override
