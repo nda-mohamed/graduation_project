@@ -38,6 +38,8 @@ dependencies:
   rive: ^0.14.0-dev.6
   firebase_core: ^4.4.0
   firebase_auth: ^6.1.4
+  google_sign_in: ^7.2.0
+  flutter_svg: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +67,7 @@ flutter:
   assets:
      - assets/onboarding/
      - assets/splash/
-     - assets/animations/
+     - assets/auth/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

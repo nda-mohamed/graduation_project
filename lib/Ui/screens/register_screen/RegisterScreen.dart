@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../FirebaseServices/google_sign_in.dart';
 import '../../../core/app_theme/AppColors.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +17,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool acceptTerms = false;
   bool showPassword = false;
@@ -32,16 +35,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _handleRegister() async {
     try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
 
       print("User created: ${credential.user?.email}");
 
-
       widget.onRegisterSuccess?.call();
-
     } on FirebaseAuthException catch (e) {
       String message = '';
 
@@ -53,9 +55,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         message = e.message ?? 'Registration failed';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -92,7 +94,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             icon: Icons.lock_outline,
             isPassword: true,
             showPassword: showPassword,
-            onTogglePassword: () => setState(() => showPassword = !showPassword),
+            onTogglePassword: () =>
+                setState(() => showPassword = !showPassword),
           ),
           const SizedBox(height: 8),
           const FieldLabel(label: 'Confirm Password'),
@@ -104,7 +107,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             icon: Icons.lock_outline,
             isPassword: true,
             showPassword: showConfirmPassword,
-            onTogglePassword: () => setState(() => showConfirmPassword = !showConfirmPassword),
+            onTogglePassword: () =>
+                setState(() => showConfirmPassword = !showConfirmPassword),
           ),
           const SizedBox(height: 24),
           Row(
@@ -117,7 +121,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     height: 20,
                     child: Checkbox(
                       value: acceptTerms,
-                      onChanged: (value) => setState(() => acceptTerms = value!),
+                      onChanged: (value) =>
+                          setState(() => acceptTerms = value!),
                       fillColor: MaterialStateProperty.all(Colors.transparent),
                       checkColor: AppColor.green6,
                       side: const BorderSide(color: AppColor.green6, width: 1),
@@ -134,7 +139,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           const SizedBox(height: 32),
           AuthButton(text: 'Register', onPressed: _handleRegister),
-          const SizedBox(height: 60),
+          const SizedBox(height: 40),
+
+          GestureDetector(
+            onTap: () async {
+              var user = await FirestoreServices.signInWithGoogle();
+              print(user.user?.displayName);
+              print(user.user?.email);
+            },
+            child: Center(
+              child: SvgPicture.asset(
+                "assets/auth/google.svg",
+                width: 40,
+                height: 40,
+              ),
+            ),
+          )
+
         ],
       ),
     );

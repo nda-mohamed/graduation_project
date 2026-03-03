@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../FirebaseServices/google_sign_in.dart';
 import '../../../core/app_theme/AppColors.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
 import '../home_screen/HomeScreen.dart';
@@ -12,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   bool rememberMe = false;
@@ -20,25 +22,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
   void _handleLogin() async {
-    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter email and password'),
-        ),
+        const SnackBar(content: Text('Please enter email and password')),
       );
       return;
     }
 
     try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-        email: usernameController.text.trim(), // لازم email
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(), // لازم email
         password: passwordController.text.trim(),
       );
 
@@ -46,13 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-
     } on FirebaseAuthException catch (e) {
-
       String message = '';
 
       if (e.code == 'user-not-found') {
@@ -65,9 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
         message = e.message ?? 'Login failed';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -77,12 +72,12 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const FieldLabel(label: 'User Name'),
+          const FieldLabel(label: 'Email Address'),
           const SizedBox(height: 8),
           AuthTextField(
             keyboardType: TextInputType.name,
-            controller: usernameController,
-            hint: 'Enter your User name',
+            controller: emailController,
+            hint: 'Enter your Email Address',
             icon: Icons.person_outline,
           ),
           const SizedBox(height: 8),
@@ -95,7 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
             icon: Icons.lock_outline,
             isPassword: true,
             showPassword: showPassword,
-            onTogglePassword: () => setState(() => showPassword = !showPassword),
+            onTogglePassword: () =>
+                setState(() => showPassword = !showPassword),
           ),
           const SizedBox(height: 24),
           Row(
@@ -125,6 +121,22 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 48),
           AuthButton(text: 'Login', onPressed: _handleLogin),
+          const SizedBox(height: 40),
+
+          GestureDetector(
+            onTap: () async {
+              var user = await FirestoreServices.signInWithGoogle();
+              print(user.user?.displayName);
+              print(user.user?.email);
+            },
+            child: Center(
+              child: SvgPicture.asset(
+                "assets/auth/google.svg",
+                width: 40,
+                height: 40,
+              ),
+            ),
+          )
         ],
       ),
     );

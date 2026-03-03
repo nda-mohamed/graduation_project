@@ -70,13 +70,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   ],
                 ),
               ),
-              // Expanded(
-              //   child: PageView(
-              //     controller: _pageController,
-              //     onPageChanged: _onPageChanged,
-              //     children: const [LoginScreen(), RegisterScreen()],
-              //   ),
-              // ),
             ],
           ),
         ),

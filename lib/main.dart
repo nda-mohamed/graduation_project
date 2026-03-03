@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:graduation_project/Ui/screens/home_screen/HomeScreen.dart';
 import 'Ui/screens/auth_screen/AuthScreen.dart';
 import 'Ui/screens/login_screen/LoginScreen.dart';
 import 'Ui/screens/onboarding_screen/onBoardingScreen.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         AppRoute.AuthScreen.name: (_) => AuthScreen(),
         AppRoute.LoginScreen.name: (_) => LoginScreen(),
         AppRoute.RegisterScreen.name: (_) => RegisterScreen(),
+        AppRoute.HomeScreen.name: (_) => HomeScreen(),
       },
     );
   }

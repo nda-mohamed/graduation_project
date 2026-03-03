@@ -4,4 +4,5 @@ enum AppRoute {
   AuthScreen,
   LoginScreen,
   RegisterScreen,
+  HomeScreen,
 }
