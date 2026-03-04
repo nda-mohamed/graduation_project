@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/app_images.dart';
+import '../../../core/app_theme/app_images.dart';
 import '../../../core/app_theme/AppColors.dart';
 import '../../../core/routes/AppRoutes.dart';
 

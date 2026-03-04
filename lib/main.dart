@@ -5,6 +5,7 @@ import 'Ui/screens/auth_screen/AuthScreen.dart';
 import 'Ui/screens/login_screen/LoginScreen.dart';
 import 'Ui/screens/onboarding_screen/onBoardingScreen.dart';
 import 'Ui/screens/register_screen/RegisterScreen.dart';
+import 'core/app_theme/AppTheme.dart';
 import 'core/routes/AppRoutes.dart';
 import 'firebase_options.dart';
 
@@ -28,7 +29,10 @@ class MyApp extends StatelessWidget {
       title: 'AGRINOVA',
       theme: ThemeData.dark(),
 
-      initialRoute: AppRoute.onBoardingScreen.name,
+      darkTheme: AppThemes.darkTheme,
+      themeMode: ThemeMode.dark,
+
+        initialRoute: AppRoute.onBoardingScreen.name,
       routes: {
         AppRoute.onBoardingScreen.name: (_) => onBoardingScreen(),
         AppRoute.AuthScreen.name: (_) => AuthScreen(),

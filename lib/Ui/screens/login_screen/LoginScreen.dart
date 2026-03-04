@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.name,
             controller: emailController,
             hint: 'Enter your Email Address',
-            icon: Icons.person_outline,
+            icon: Icons.email_outlined,
           ),
           const SizedBox(height: 8),
           const FieldLabel(label: 'Password'),

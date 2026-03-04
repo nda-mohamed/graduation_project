@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../FirebaseServices/google_sign_in.dart';
 import '../../../core/app_theme/AppColors.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../login_screen/LoginScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final VoidCallback? onRegisterSuccess;
@@ -34,6 +36,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _handleRegister() async {
+    if (!acceptTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept terms & conditions')),
+      );
+      return;
+    }
+
     try {
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
@@ -41,7 +50,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
             password: passwordController.text.trim(),
           );
 
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credential.user!.uid)
+          .set({
+            'name': usernameController.text.trim(),
+            'email': emailController.text.trim(),
+            'country': '', // ممكن تخليها فاضية
+          });
+
       print("User created: ${credential.user?.email}");
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
 
       widget.onRegisterSuccess?.call();
     } on FirebaseAuthException catch (e) {
@@ -154,8 +177,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 40,
               ),
             ),
-          )
-
+          ),
         ],
       ),
     );
