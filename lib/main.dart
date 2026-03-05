@@ -12,9 +12,7 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); /////////////////////
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
 }
@@ -32,7 +30,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppThemes.darkTheme,
       themeMode: ThemeMode.dark,
 
-        initialRoute: AppRoute.onBoardingScreen.name,
+      initialRoute: AppRoute.onBoardingScreen.name,
       routes: {
         AppRoute.onBoardingScreen.name: (_) => onBoardingScreen(),
         AppRoute.AuthScreen.name: (_) => AuthScreen(),

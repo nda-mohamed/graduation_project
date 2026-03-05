@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../FirebaseServices/google_sign_in.dart';
 import '../../../core/app_theme/AppColors.dart';
+import '../../../core/routes/AppRoutes.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../login_screen/LoginScreen.dart';
+
+import '../home_screen/HomeScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final VoidCallback? onRegisterSuccess;
@@ -43,6 +45,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      return;
+    }
+
     try {
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
@@ -56,17 +65,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           .set({
             'name': usernameController.text.trim(),
             'email': emailController.text.trim(),
-            'country': '', // ممكن تخليها فاضية
+            'country': '',
           });
 
       print("User created: ${credential.user?.email}");
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-
       widget.onRegisterSuccess?.call();
+
     } on FirebaseAuthException catch (e) {
       String message = '';
 
@@ -163,7 +168,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const SizedBox(height: 32),
           AuthButton(text: 'Register', onPressed: _handleRegister),
           const SizedBox(height: 40),
-
           GestureDetector(
             onTap: () async {
               var user = await FirestoreServices.signInWithGoogle();

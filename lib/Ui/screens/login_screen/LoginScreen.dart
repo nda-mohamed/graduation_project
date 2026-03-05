@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../FirebaseServices/google_sign_in.dart';
 import '../../../core/app_theme/AppColors.dart';
+import '../../../core/routes/AppRoutes.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
-import '../home_screen/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -43,10 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print("Login success: ${credential.user?.email}");
 
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        AppRoute.HomeScreen.name,
       );
+
     } on FirebaseAuthException catch (e) {
       String message = '';
 
@@ -122,7 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 48),
           AuthButton(text: 'Login', onPressed: _handleLogin),
           const SizedBox(height: 40),
-
           GestureDetector(
             onTap: () async {
               var user = await FirestoreServices.signInWithGoogle();

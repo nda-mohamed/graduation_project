@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/app_theme/AppColors.dart';
+import '../../../core/routes/AppRoutes.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
+import '../home_screen/HomeScreen.dart';
 import '../login_screen/LoginScreen.dart';
 import '../register_screen/RegisterScreen.dart';
 
@@ -60,10 +62,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     const LoginScreen(),
                     RegisterScreen(
                       onRegisterSuccess: () {
-                        _pageController.animateToPage(
-                          0, // صفحة Login
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
                         );
                       },
                     ),
