@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/app_theme/AppColors.dart';
-import '../../../core/routes/AppRoutes.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
 import '../home_screen/HomeScreen.dart';
 import '../login_screen/LoginScreen.dart';

@@ -31,33 +31,44 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedTapIndex,
-        onTap: (index) {
-          setState(() {
-            selectedTapIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            backgroundColor: AppColor.background,
-            icon: ImageIcon(AssetImage(AppImage.robot)),
-            label: 'Robot',
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 2,
+            decoration: BoxDecoration(
+              color: AppColor.green5,
+            ),
           ),
-          BottomNavigationBarItem(
-            backgroundColor: AppColor.background,
-            icon: ImageIcon(AssetImage(AppImage.drone)),
-            label: 'Drone',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: AppColor.background,
-            icon: ImageIcon(AssetImage(AppImage.disease_detection)),
-            label: 'Disease\nDetection',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: AppColor.background,
-            icon: ImageIcon(AssetImage(AppImage.profile)),
-            label: 'Profile',
+          BottomNavigationBar(
+            currentIndex: selectedTapIndex,
+            onTap: (index) {
+              setState(() {
+                selectedTapIndex = index;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                backgroundColor: AppColor.background,
+                icon: ImageIcon(AssetImage(AppImage.robot)),
+                label: 'Robot',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: AppColor.background,
+                icon: ImageIcon(AssetImage(AppImage.drone)),
+                label: 'Drone',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: AppColor.background,
+                icon: ImageIcon(AssetImage(AppImage.disease_detection)),
+                label: 'Disease\nDetection',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: AppColor.background,
+                icon: ImageIcon(AssetImage(AppImage.profile)),
+                label: 'Profile',
+              ),
+            ],
           ),
         ],
       ),

@@ -11,6 +11,9 @@ class ProfileContent extends StatefulWidget {
 }
 
 class _ProfileContentState extends State<ProfileContent> {
+  bool pushNotifications = true;
+  bool emailNotifications = true;
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -69,26 +72,27 @@ class _ProfileContentState extends State<ProfileContent> {
         }
         final data = rawData as Map<String, dynamic>;
 
-        if (nameController.text.isEmpty) nameController.text = data['name'] ?? '';
-        if (countryController.text.isEmpty) countryController.text = data['country'] ?? '';
-        if (emailController.text.isEmpty) emailController.text = data['email'] ?? '';
+        if (nameController.text.isEmpty)
+          nameController.text = data['name'] ?? '';
+        if (countryController.text.isEmpty)
+          countryController.text = data['country'] ?? '';
+        if (emailController.text.isEmpty)
+          emailController.text = data['email'] ?? '';
 
         return Scaffold(
           backgroundColor: AppColor.background,
           appBar: AppBar(
             backgroundColor: AppColor.background,
-            actions: [
-              IconButton(
-                icon: const Icon(
-                  Icons.settings_outlined,
-                  color: AppColor.green6,
-                  size: 28,
-                ),
-                onPressed: () async {
-                  //Navigator.pushReplacementNamed(context, '/login');
-                },
-              ),
-            ],
+            // actions: [
+            //   IconButton(
+            //     icon: const Icon(
+            //       Icons.settings_outlined,
+            //       color: AppColor.green6,
+            //       size: 28,
+            //     ),
+            //     onPressed: () {},
+            //   ),
+            // ],
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -122,6 +126,40 @@ class _ProfileContentState extends State<ProfileContent> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 40),
+                SwitchListTile(
+                  title: const Text(
+                    "Push Notifications",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  value: pushNotifications,
+                  activeColor: AppColor.green5,
+                  onChanged: (value) {
+                    setState(() {
+                      pushNotifications = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text(
+                    "Email Notifications",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  value: emailNotifications,
+                  activeColor: AppColor.green5,
+                  onChanged: (value) {
+                    setState(() {
+                      emailNotifications = value;
+                    });
+                  },
+                ),
               ],
             ),
           ),

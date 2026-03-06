@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../FirebaseServices/google_sign_in.dart';
 import '../../../core/app_theme/AppColors.dart';
-import '../../../core/routes/AppRoutes.dart';
 import '../../../core/widgets/auth/common_widgets/common_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../home_screen/HomeScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final VoidCallback? onRegisterSuccess;

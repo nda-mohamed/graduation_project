@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppThemes.darkTheme,
       themeMode: ThemeMode.dark,
 
-      initialRoute: AppRoute.onBoardingScreen.name,
+      initialRoute: AppRoute.HomeScreen.name,
       routes: {
         AppRoute.onBoardingScreen.name: (_) => onBoardingScreen(),
         AppRoute.AuthScreen.name: (_) => AuthScreen(),
