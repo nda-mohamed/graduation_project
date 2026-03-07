@@ -1,9 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../core/ai/plant_disease_model.dart';
 import '../../../../core/app_theme/AppColors.dart';
 import 'CameraScreen.dart';
+import 'DetailsScreen.dart';
 
 class DiseaseDetectionContent extends StatefulWidget {
   const DiseaseDetectionContent({super.key});
@@ -15,16 +16,47 @@ class DiseaseDetectionContent extends StatefulWidget {
 class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
   File? _imageFile;
 
+  PlantDiseaseModel model = PlantDiseaseModel();
+
+  @override
+  void initState() {
+    super.initState();
+    model.loadModel();
+  }
+
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
+      File image = File(pickedFile.path);
+
+      // 1️⃣ تأكيد اختيار الصورة
+      print("✅ Image selected: ${image.path}");
+
+      // 2️⃣ Loading Indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
+      // 3️⃣ تشغيل الموديل
+      print("⏳ Running model...");
+      var result = model.runModel(image);
+      print("✅ Model finished. Result: $result");
+
+      Navigator.pop(context); // اغلاق الـ loading
+
+      // 4️⃣ فتح التفاصيل
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailsScreen(image: image, result: result),
+        ),
+      );
+
     } else {
-      // لو المستخدم ضغط رجوع بدون اختيار صورة
       print('No image selected.');
     }
   }
@@ -107,7 +139,7 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: _pickImageFromGallery,
+                onPressed: _pickImageFromGallery, //////////
                 icon: const Icon(
                   Icons.file_upload_outlined,
                   color: AppColor.white,

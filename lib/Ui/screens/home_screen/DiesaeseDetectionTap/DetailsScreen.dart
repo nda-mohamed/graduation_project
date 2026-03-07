@@ -1,11 +1,29 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../core/app_theme/AppColors.dart';
 
 class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key});
+  final File image;
+  final List result;
+
+  const DetailsScreen({super.key, required this.image, required this.result});
 
   @override
   Widget build(BuildContext context) {
+    // 3 أصناف فقط حسب الموديل
+    List diseases = [
+      "Healthy",
+      "Powdery Mildew",
+      "Leaf Rust"
+    ];
+
+    // ✅ تحويل result لكل العناصر لـ double
+    List<double> output = result.map((e) => (e as num).toDouble()).toList();
+
+    // index لأعلى قيمة
+    int index = output.indexWhere((e) => e == output.reduce((a, b) => a > b ? a : b));
+    String diseaseName = diseases[index];
+
     return Scaffold(
       backgroundColor: AppColor.background,
       body: Padding(
@@ -14,65 +32,41 @@ class DetailsScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 40),
 
-            /// صورة النبات
+            // صورة النبات
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.asset("assets/leaf.jpg"),
+              child: Image.file(image),
             ),
 
             const SizedBox(height: 20),
 
             const Text(
-              "Details",
+              "Detection Result",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
             const SizedBox(height: 20),
 
-            /// التقرير
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColor.green5.withOpacity(.2),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
                   Text(
-                    "Report",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    "Disease: $diseaseName",
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
-
-                  SizedBox(height: 10),
-
+                  const SizedBox(height: 10),
                   Text(
-                    "Insects:"
-                        "\nNo insects found, your plant looks healthy.",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Text(
-                    "Health Condition:"
-                        "\nNo health issue detected.",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Text(
-                    "Hydration Condition:"
-                        "\nPlant is slightly dehydrated.",
-                    style: TextStyle(color: Colors.white70),
+                    "Confidence: ${(output[index] * 100).toStringAsFixed(2)} %",
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
