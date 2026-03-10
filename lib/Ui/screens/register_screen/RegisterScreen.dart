@@ -94,25 +94,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const FieldLabel(label: 'Email Address'),
+
           const SizedBox(height: 8),
+
           AuthTextField(
             keyboardType: TextInputType.emailAddress,
             controller: emailController,
             hint: 'Enter your Email Address',
             icon: Icons.email_outlined,
           ),
+
           const SizedBox(height: 8),
+
           const FieldLabel(label: 'User Name'),
+
           const SizedBox(height: 8),
+
           AuthTextField(
             keyboardType: TextInputType.name,
             controller: usernameController,
             hint: 'Enter your User name',
             icon: Icons.person_outline,
           ),
+
           const SizedBox(height: 8),
+
           const FieldLabel(label: 'Password'),
+
           const SizedBox(height: 8),
+
           AuthTextField(
             keyboardType: TextInputType.visiblePassword,
             controller: passwordController,
@@ -123,9 +133,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             onTogglePassword: () =>
                 setState(() => showPassword = !showPassword),
           ),
+
           const SizedBox(height: 8),
+
           const FieldLabel(label: 'Confirm Password'),
+
           const SizedBox(height: 8),
+
           AuthTextField(
             keyboardType: TextInputType.visiblePassword,
             controller: confirmPasswordController,
@@ -136,7 +150,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             onTogglePassword: () =>
                 setState(() => showConfirmPassword = !showConfirmPassword),
           ),
+
           const SizedBox(height: 24),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -154,7 +170,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       side: const BorderSide(color: AppColor.green6, width: 1),
                     ),
                   ),
+
                   const SizedBox(width: 8),
+
                   const Text(
                     'Creating Account With Accepting Terms & Conditions',
                     style: TextStyle(color: AppColor.green6, fontSize: 12),
@@ -163,9 +181,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ],
           ),
+
           const SizedBox(height: 32),
+
           AuthButton(text: 'Register', onPressed: _handleRegister),
+
           const SizedBox(height: 40),
+
           GestureDetector(
             onTap: () async {
               var user = await FirestoreServices.signInWithGoogle();

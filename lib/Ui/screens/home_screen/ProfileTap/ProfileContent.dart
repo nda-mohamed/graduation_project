@@ -98,6 +98,7 @@ class _ProfileContentState extends State<ProfileContent> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
+
                 Container(
                   width: 200,
                   height: 200,
@@ -115,17 +116,22 @@ class _ProfileContentState extends State<ProfileContent> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 50),
+
                 buildProfileField("Name :", nameController),
+
                 // const SizedBox(height: 16),
                 // buildProfileField("Country :", countryController),
                 const SizedBox(height: 16),
+
                 buildProfileField(
                   "Email :",
                   emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 40),
+
                 SwitchListTile(
                   title: const Text(
                     "Push Notifications",
@@ -143,6 +149,7 @@ class _ProfileContentState extends State<ProfileContent> {
                     });
                   },
                 ),
+
                 SwitchListTile(
                   title: const Text(
                     "Email Notifications",
@@ -189,7 +196,9 @@ class _ProfileContentState extends State<ProfileContent> {
               ),
             ),
           ),
+
           const SizedBox(width: 8),
+
           Expanded(
             child: TextField(
               controller: controller,

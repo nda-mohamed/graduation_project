@@ -1,82 +1,112 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../core/ai/plant_disease_model.dart';
+import '../../../../core/app_theme/AppColors.dart';
 import 'DetailsScreen.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key});
+
+  final File image;
+
+  const CameraScreen({super.key, required this.image});
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _CameraScreenState extends State<CameraScreen>
+    with SingleTickerProviderStateMixin {
+
+  late AnimationController controller;
+
   PlantDiseaseModel model = PlantDiseaseModel();
 
   @override
   void initState() {
     super.initState();
+
     model.loadModel();
+
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    analyze();
   }
 
-  Future<void> _takePhoto() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+  Future analyze() async {
 
-    if (pickedFile != null) {
-      File image = File(pickedFile.path);
+    await Future.delayed(const Duration(seconds: 2));
 
-      print("✅ Photo taken: ${image.path}");
+    var result = model.runModel(widget.image);
 
-      // Loading
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator()),
-      );
-
-      print("⏳ Running model...");
-      var result = model.runModel(image);
-      print("✅ Model finished. Result: $result");
-
-      Navigator.pop(context); // close loading
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => DetailsScreen(image: image, result: result),
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetailsScreen(
+          image: widget.image,
+          result: result,
         ),
-      );
-    } else {
-      print("❌ No photo taken.");
-    }
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      backgroundColor: AppColor.background,
       body: Stack(
         children: [
-          Center(
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 3),
-                borderRadius: BorderRadius.circular(20),
+
+          /// الصورة
+          SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Image.file(
+              widget.image,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          /// خط الاسكان
+          AnimatedBuilder(
+            animation: controller,
+            builder: (_, __) {
+
+              return Positioned(
+                top: controller.value *
+                    MediaQuery.of(context).size.height,
+
+                left: 0,
+                right: 0,
+
+                child: Container(
+                  height: 3,
+                  color: Colors.greenAccent,
+                ),
+              );
+            },
+          ),
+
+          /// النص
+          const Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                "Scanning Leaf...",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-          Positioned(
-            bottom: 50,
-            left: 30,
-            right: 30,
-            child: ElevatedButton(
-              onPressed: _takePhoto,
-              child: const Text("Analyze"),
-            ),
-          ),
+
         ],
       ),
     );

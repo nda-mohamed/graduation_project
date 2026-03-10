@@ -10,69 +10,97 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 3 أصناف فقط حسب الموديل
+
+    /// أسماء الأمراض
     List diseases = [
       "Healthy",
       "Powdery Mildew",
       "Leaf Rust"
     ];
 
-    // ✅ تحويل result لكل العناصر لـ double
+    /// تحويل النتيجة إلى double
     List<double> output = result.map((e) => (e as num).toDouble()).toList();
 
-    // index لأعلى قيمة
-    int index = output.indexWhere((e) => e == output.reduce((a, b) => a > b ? a : b));
+    /// أعلى قيمة
+    double maxValue = output.reduce((a, b) => a > b ? a : b);
+
+    /// index للمرض
+    int index = output.indexOf(maxValue);
+
+    /// اسم المرض
     String diseaseName = diseases[index];
+
+    /// نسبة الثقة
+    double confidence = maxValue * 100;
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
+      body: Column(
+        children: [
 
-            // صورة النبات
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.file(image),
-            ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              "Detection Result",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+          /// صورة النبات
+          SizedBox(
+            height: 400,
+            width: double.infinity,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(25),
+                bottomRight: Radius.circular(25),
+              ),
+              child: Image.file(
+                image,
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColor.green5.withOpacity(.2),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "Disease: $diseaseName",
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
+          const Text(
+            "Details",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColor.greenD,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Column(
+              children: [
+
+                Text(
+                  "Disease: $diseaseName",
+                  style: const TextStyle(
+                    color: AppColor.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Confidence: ${(output[index] * 100).toStringAsFixed(2)} %",
-                    style: const TextStyle(color: Colors.white70),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  "Confidence: ${confidence.toStringAsFixed(2)} %",
+                  style: const TextStyle(
+                    color: AppColor.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+
+              ],
             ),
-          ],
-        ),
+          ),
+
+        ],
       ),
     );
   }

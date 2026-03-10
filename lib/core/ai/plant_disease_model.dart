@@ -7,7 +7,7 @@ class PlantDiseaseModel {
 
   Future loadModel() async {
     interpreter = await Interpreter.fromAsset(
-      'assets/models/DD/vgg_model.tflite',
+      'assets/models/DD/plant_disease_model_cnn.tflite',
     );
   }
 

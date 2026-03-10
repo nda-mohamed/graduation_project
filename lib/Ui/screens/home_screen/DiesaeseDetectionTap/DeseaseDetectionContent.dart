@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:graduation_project/Ui/screens/home_screen/DiesaeseDetectionTap/CameraScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/ai/plant_disease_model.dart';
 import '../../../../core/app_theme/AppColors.dart';
-import 'CameraScreen.dart';
-import 'DetailsScreen.dart';
 
 class DiseaseDetectionContent extends StatefulWidget {
   const DiseaseDetectionContent({super.key});
@@ -14,7 +13,6 @@ class DiseaseDetectionContent extends StatefulWidget {
 }
 
 class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
-  File? _imageFile;
 
   PlantDiseaseModel model = PlantDiseaseModel();
 
@@ -24,6 +22,7 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
     model.loadModel();
   }
 
+  // اختيار صورة من المعرض
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -31,33 +30,41 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
     if (pickedFile != null) {
       File image = File(pickedFile.path);
 
-      // 1️⃣ تأكيد اختيار الصورة
       print("✅ Image selected: ${image.path}");
 
-      // 2️⃣ Loading Indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator()),
-      );
-
-      // 3️⃣ تشغيل الموديل
-      print("⏳ Running model...");
-      var result = model.runModel(image);
-      print("✅ Model finished. Result: $result");
-
-      Navigator.pop(context); // اغلاق الـ loading
-
-      // 4️⃣ فتح التفاصيل
+      // فتح شاشة Scan مباشرة بعد اختيار الصورة
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => DetailsScreen(image: image, result: result),
+          builder: (_) => CameraScreen(image: image),
         ),
       );
 
     } else {
       print('No image selected.');
+    }
+  }
+
+  // فتح الكاميرا مباشرة
+  Future<void> _takePhoto() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      File image = File(pickedFile.path);
+
+      print("✅ Photo taken: ${image.path}");
+
+      // فتح شاشة Scan مباشرة بعد التقاط الصورة
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CameraScreen(image: image),
+        ),
+      );
+
+    } else {
+      print('No photo taken.');
     }
   }
 
@@ -70,6 +77,7 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             Container(
               width: 80,
               height: 80,
@@ -79,7 +87,9 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
               ),
               child: Icon(Icons.add_rounded, color: AppColor.white, size: 50),
             ),
+
             const SizedBox(height: 30),
+
             const Text(
               "Identify Crop Diseases",
               style: TextStyle(
@@ -89,13 +99,18 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
               ),
               textAlign: TextAlign.center,
             ),
+
             const SizedBox(height: 10),
+
             Text(
               "Capture or upload an image of the affected\ncrop leaf for an instant AI-powered analysis.",
               style: TextStyle(color: AppColor.gray, fontSize: 14),
               textAlign: TextAlign.center,
             ),
+
             const SizedBox(height: 30),
+
+            // زرار الكاميرا
             SizedBox(
               width: double.infinity,
               height: 45,
@@ -106,14 +121,7 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const CameraScreen(),
-                    ),
-                  );
-                },
+                onPressed: _takePhoto,
                 icon: const Icon(
                   Icons.camera_alt_outlined,
                   color: AppColor.black,
@@ -128,7 +136,10 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
                 ),
               ),
             ),
+
             const SizedBox(height: 15),
+
+            // زرار رفع من المعرض
             SizedBox(
               width: double.infinity,
               height: 45,
@@ -139,7 +150,7 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: _pickImageFromGallery, //////////
+                onPressed: _pickImageFromGallery,
                 icon: const Icon(
                   Icons.file_upload_outlined,
                   color: AppColor.white,
@@ -154,6 +165,7 @@ class _DiseaseDetectionContentState extends State<DiseaseDetectionContent> {
                 ),
               ),
             ),
+
           ],
         ),
       ),
