@@ -74,16 +74,22 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const FieldLabel(label: 'Email Address'),
+
           const SizedBox(height: 8),
+
           AuthTextField(
             keyboardType: TextInputType.name,
             controller: emailController,
             hint: 'Enter your Email Address',
             icon: Icons.email_outlined,
           ),
+
           const SizedBox(height: 8),
+
           const FieldLabel(label: 'Password'),
+
           const SizedBox(height: 8),
+
           AuthTextField(
             keyboardType: TextInputType.visiblePassword,
             controller: passwordController,
@@ -94,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
             onTogglePassword: () =>
                 setState(() => showPassword = !showPassword),
           ),
+
           const SizedBox(height: 24),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -111,7 +119,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       side: const BorderSide(color: AppColor.green6, width: 1),
                     ),
                   ),
+
                   const SizedBox(width: 8),
+
                   const Text(
                     'Remember me',
                     style: TextStyle(color: AppColor.green6, fontSize: 12),
@@ -120,9 +130,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
+
           const SizedBox(height: 48),
+
           AuthButton(text: 'Login', onPressed: _handleLogin),
+
           const SizedBox(height: 40),
+
           GestureDetector(
             onTap: () async {
               var user = await FirestoreServices.signInWithGoogle();
