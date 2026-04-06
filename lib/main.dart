@@ -15,7 +15,13 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await dotenv.load(fileName: ".env");
+  //await dotenv.load(fileName: "open_ai_key.env");
+
+  try {
+    await dotenv.load(fileName: "open_ai_key.env");
+  } catch (e) {
+    print("⚠️ .env file not found");
+  }
 
   runApp(const MyApp());
 }
