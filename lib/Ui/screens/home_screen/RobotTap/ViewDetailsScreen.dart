@@ -12,11 +12,17 @@ class ViewDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColor.background,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColor.white, size: 18),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: AppColor.green8,
+            size: 18,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Overview',
-            style: TextStyle(color: AppColor.white, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Overview',
+          style: TextStyle(color: AppColor.green8, fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -32,7 +38,9 @@ class ViewDetailsScreen extends StatelessWidget {
                     icon: Icons.water_drop_outlined,
                   ),
                 ),
+
                 const SizedBox(width: 12),
+
                 Expanded(
                   child: StatCard(
                     label: 'Temperature',
@@ -42,6 +50,7 @@ class ViewDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
+
             const SizedBox(height: 12),
 
             SectionCard(
@@ -49,11 +58,13 @@ class ViewDetailsScreen extends StatelessWidget {
               child: const Text(
                 '12-8-10',
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.white),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.white,
+                ),
               ),
             ),
+
             const SizedBox(height: 12),
 
             TrendCard(
@@ -62,8 +73,9 @@ class ViewDetailsScreen extends StatelessWidget {
               value: '+5%',
               valueColor: AppColor.green,
               lineColor: AppColor.green,
-              points: const [30, 20, 28, 10, 22, 15, 18],
+              points: const [15, 45, 10, 90, 22, 15, 60],
             ),
+
             const SizedBox(height: 12),
 
             TrendCard(
@@ -72,49 +84,45 @@ class ViewDetailsScreen extends StatelessWidget {
               value: '-2%',
               valueColor: AppColor.red,
               lineColor: AppColor.red,
-              points: const [20, 30, 15, 35, 12, 28, 22],
+              points: const [20, 30, 15, 2, 12, 28, 22],
             ),
+
             const SizedBox(height: 12),
 
             const SectionLabel(label: 'Field Status'),
+
             const SizedBox(height: 8),
+
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Container(
-                height: 140,
+              child: Image.asset(
+                'assets/robot/fieldstatus.png',
+                height: 180,
                 width: double.infinity,
-                color: const Color(0xFF2A4A2A),
-                child: Stack(
-                  children: [
-                    CustomPaint(
-                      size: const Size(double.infinity, 140),
-                      painter: FakeMapPainter(),
-                    ),
-                    const Center(
-                      child: Icon(Icons.location_on,
-                          color: AppColor.green, size: 36),
-                    ),
-                  ],
-                ),
+                fit: BoxFit.cover,
               ),
             ),
+
             const SizedBox(height: 12),
 
             const SectionLabel(label: 'AI Insights'),
+
             const SizedBox(height: 8),
+
             InsightCard(
               title: 'Irrigation Optimization',
               subtitle: 'AI suggests reducing irrigation by 15%',
-              icon: Icons.water_outlined,
-              color: const Color(0xFF1B3A1B),
+              imagePath: 'assets/robot/Optimization.png',
             ),
-            const SizedBox(height: 10),
+
+            const SizedBox(height: 16),
+
             InsightCard(
               title: 'Yield Prediction',
-              subtitle: 'AI predicts a 10% yield increase this season',
-              icon: Icons.trending_up,
-              color: const Color(0xFF1B3A1B),
+              subtitle: 'AL predicts a 10% yield increase this season',
+              imagePath: 'assets/robot/Prediction.png',
             ),
+
             const SizedBox(height: 24),
           ],
         ),

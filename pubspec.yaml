@@ -79,6 +79,7 @@ flutter:
      - assets/auth/
      - assets/homeBar/
      - assets/profile/
+     - assets/robot/
      - assets/models/DD/vgg_model.tflite
      - assets/models/DD/plant_disease_model_cnn.tflite
      - assets/alert.png

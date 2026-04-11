@@ -22,10 +22,10 @@ class DroneContent extends StatelessWidget {
             icon: ImageIcon(AssetImage(AppImage.chatbot)),
             color: AppColor.white,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ChatBot()),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => ChatBot()),
+              // );
             },
           ),
           IconButton(

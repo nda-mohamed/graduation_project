@@ -1,51 +1,60 @@
 import 'package:flutter/material.dart';
 import '../../../../core/app_theme/AppColors.dart';
 
-// ============================================================
-//  InfoBanner
-// ============================================================
 class InfoBanner extends StatelessWidget {
   final VoidCallback onViewDetails;
   const InfoBanner({super.key, required this.onViewDetails});
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
+    padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-      color: AppColor.cardBackground,
+      color: AppColor.greenD,
       borderRadius: BorderRadius.circular(12),
     ),
-    child: Row(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: const Text(
-            'Information about your plants today',
-            style: TextStyle(color: AppColor.textSecondary, fontSize: 13),
-          ),
+        const Text(
+          'Information about your plants today',
+          style: TextStyle(color: AppColor.gray, fontSize: 14),
         ),
-        const SizedBox(width: 12),
+
+        const SizedBox(height: 10),
+
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColor.green,
-            foregroundColor: AppColor.white,
-            padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            backgroundColor: AppColor.greenTP,
+            foregroundColor: AppColor.green1,
+            padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 8),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(24),
+            ),
             elevation: 0,
           ),
           onPressed: onViewDetails,
-          child: const Text('View Details',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          child: const Text(
+            'View Details',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            'assets/robot/VD.png',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 120,
+          ),
         ),
       ],
     ),
   );
 }
 
-// ============================================================
-//  SectionCard
-// ============================================================
 class SectionCard extends StatelessWidget {
   final String title;
   final Widget child;
@@ -53,53 +62,57 @@ class SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
+    width: double.infinity,
+    padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-      color: AppColor.cardBackground,
+      color: AppColor.greenD,
       borderRadius: BorderRadius.circular(12),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: const TextStyle(
-                color: AppColor.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15)),
+        Text(
+          title,
+          style: const TextStyle(
+            color: AppColor.gray,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+
         const SizedBox(height: 10),
+
         child,
       ],
     ),
   );
 }
 
-// ============================================================
-//  SectionLabel
-// ============================================================
 class SectionLabel extends StatelessWidget {
   final String label;
   const SectionLabel({super.key, required this.label});
 
   @override
-  Widget build(BuildContext context) => Text(label,
-      style: const TextStyle(
-          color: AppColor.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 15));
+  Widget build(BuildContext context) => Text(
+    label,
+    style: const TextStyle(
+      color: AppColor.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    ),
+  );
 }
 
-// ============================================================
-//  NutrientBar
-// ============================================================
 class NutrientBar extends StatelessWidget {
   final String label;
   final double value; // 0.0 – 1.0
   final String display;
-  const NutrientBar(
-      {super.key,
-        required this.label,
-        required this.value,
-        required this.display});
+  const NutrientBar({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.display,
+  });
 
   @override
   Widget build(BuildContext context) => Column(
@@ -108,32 +121,32 @@ class NutrientBar extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: const TextStyle(
-                  color: AppColor.textSecondary, fontSize: 12)),
-          Text(display,
-              style: const TextStyle(
-                  color: AppColor.textSecondary, fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(color: AppColor.green8, fontSize: 13),
+          ),
+          Text(
+            display,
+            style: const TextStyle(color: AppColor.green8, fontSize: 13),
+          ),
         ],
       ),
+
       const SizedBox(height: 4),
+
       ClipRRect(
         borderRadius: BorderRadius.circular(4),
         child: LinearProgressIndicator(
           value: value,
           minHeight: 8,
-          backgroundColor: AppColor.background,
-          valueColor:
-          const AlwaysStoppedAnimation<Color>(AppColor.green),
+          backgroundColor: AppColor.greenUu,
+          valueColor: const AlwaysStoppedAnimation<Color>(AppColor.greenTP),
         ),
       ),
     ],
   );
 }
 
-// ============================================================
-//  MiniLineChart
-// ============================================================
 class MiniLineChart extends StatelessWidget {
   final Color color;
   const MiniLineChart({super.key, required this.color});
@@ -144,79 +157,69 @@ class MiniLineChart extends StatelessWidget {
     child: CustomPaint(
       size: const Size(double.infinity, 60),
       painter: LinePainter(
-        points: const [0.5, 0.3, 0.6, 0.2, 0.5, 0.35, 0.55, 0.4],
+        points: const [0.85, 0.3, 2, 0.2, 0.6, 0.2, -0.6, 0.4, 1, -0.5],
         color: color,
       ),
     ),
   );
 }
 
-// ============================================================
-//  LinePainter
-// ============================================================
 class LinePainter extends CustomPainter {
   final List<double> points;
   final Color color;
-  const LinePainter({required this.points, required this.color});
+
+  LinePainter({required this.points, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final fillPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [color.withOpacity(0.3), color.withOpacity(0.0)],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
-      ..style = PaintingStyle.fill;
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
 
     final path = Path();
-    final fillPath = Path();
-    for (int i = 0; i < points.length; i++) {
-      final x = i * size.width / (points.length - 1);
-      final y = size.height - points[i] * size.height;
-      if (i == 0) {
-        path.moveTo(x, y);
-        fillPath.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-        fillPath.lineTo(x, y);
-      }
+    final dx = size.width / (points.length - 1);
+
+    // أول نقطة
+    path.moveTo(0, size.height * (1 - points[0]));
+
+    for (int i = 0; i < points.length - 1; i++) {
+      final x1 = dx * i;
+      final y1 = size.height * (1 - points[i]);
+
+      final x2 = dx * (i + 1);
+      final y2 = size.height * (1 - points[i + 1]);
+
+      // control point (منتصف بينهم)
+      final controlX = (x1 + x2) / 2;
+      final controlY = (y1 + y2) / 2;
+
+      path.quadraticBezierTo(x1, y1, controlX, controlY);
     }
-    fillPath.lineTo(size.width, size.height);
-    fillPath.lineTo(0, size.height);
-    fillPath.close();
-    canvas.drawPath(fillPath, fillPaint);
+
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(LinePainter old) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-// ============================================================
-//  StatCard
-// ============================================================
 class StatCard extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
-  const StatCard(
-      {super.key,
-        required this.label,
-        required this.value,
-        required this.icon});
+  const StatCard({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(14),
     decoration: BoxDecoration(
-      color: AppColor.cardBackground,
+      color: AppColor.greenD,
       borderRadius: BorderRadius.circular(12),
     ),
     child: Column(
@@ -224,27 +227,35 @@ class StatCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, color: AppColor.green, size: 16),
-            const SizedBox(width: 4),
-            Text(label,
-                style: const TextStyle(
-                    color: AppColor.textSecondary, fontSize: 11)),
+            Icon(icon, color: AppColor.gray, size: 16),
+
+            const SizedBox(width: 5),
+
+            Text(
+              label,
+              style: const TextStyle(
+                color: AppColor.gray,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 6),
-        Text(value,
-            style: const TextStyle(
-                color: AppColor.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold)),
+
+        const SizedBox(height: 8),
+
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppColor.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     ),
   );
 }
 
-// ============================================================
-//  TrendCard
-// ============================================================
 class TrendCard extends StatelessWidget {
   final String label;
   final String badge;
@@ -272,7 +283,7 @@ class TrendCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColor.cardBackground,
+        color: AppColor.greenD,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -281,19 +292,30 @@ class TrendCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(label,
-                  style: const TextStyle(
-                      color: AppColor.textSecondary, fontSize: 12)),
-              Text(badge, style: TextStyle(color: valueColor, fontSize: 11)),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColor.gray,
+                  fontSize: 14,
+                ),
+              ),
+              Text(badge, style: TextStyle(color: AppColor.gray, fontSize: 11)),
             ],
           ),
+
           const SizedBox(height: 4),
-          Text(value,
-              style: TextStyle(
-                  color: valueColor,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+
+          Text(
+            value,
+            style: TextStyle(
+              color: AppColor.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
           SizedBox(
             height: 60,
             child: CustomPaint(
@@ -301,17 +323,40 @@ class TrendCard extends StatelessWidget {
               painter: LinePainter(points: normalised, color: lineColor),
             ),
           ),
-          const SizedBox(height: 4),
+
+          const SizedBox(height: 20),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
-              Text('Mon', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
-              Text('Tue', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
-              Text('Wed', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
-              Text('Thu', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
-              Text('Fri', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
-              Text('Sat', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
-              Text('Sun', style: TextStyle(fontSize: 9, color: AppColor.textSecondary)),
+              Text(
+                'Mon',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
+              Text(
+                'Tue',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
+              Text(
+                'Wed',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
+              Text(
+                'Thu',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
+              Text(
+                'Fri',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
+              Text(
+                'Sat',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
+              Text(
+                'Sun',
+                style: TextStyle(fontSize: 10, color: AppColor.gray),
+              ),
             ],
           ),
         ],
@@ -320,57 +365,61 @@ class TrendCard extends StatelessWidget {
   }
 }
 
-// ============================================================
-//  InsightCard
-// ============================================================
 class InsightCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData icon;
-  final Color color;
+  final String imagePath;
+
   const InsightCard({
     super.key,
     required this.title,
     required this.subtitle,
-    required this.icon,
-    required this.color,
+    required this.imagePath,
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-    height: 90,
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: AppColor.green.withOpacity(0.3)),
-    ),
-    padding: const EdgeInsets.all(14),
-    child: Row(
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Stack(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppColor.green.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: AppColor.green, size: 22),
+        Image.asset(
+          imagePath,
+          height: 180,
+          width: double.infinity,
+          fit: BoxFit.cover,
         ),
-        const SizedBox(width: 12),
-        Expanded(
+
+        Container(
+          height: 180,
+          width: double.infinity,
+          color: Colors.black.withOpacity(0.3),
+        ),
+
+        Positioned(
+          left: 12,
+          bottom: 12,
+          right: 12,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title,
-                  style: const TextStyle(
-                      color: AppColor.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14)),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: AppColor.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+
               const SizedBox(height: 4),
-              Text(subtitle,
-                  style: const TextStyle(
-                      color: AppColor.textSecondary, fontSize: 12)),
+
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: AppColor.white,
+                  fontSize: 12,
+                ),
+              ),
             ],
           ),
         ),
@@ -379,9 +428,6 @@ class InsightCard extends StatelessWidget {
   );
 }
 
-// ============================================================
-//  FakeMapPainter
-// ============================================================
 class FakeMapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -397,12 +443,12 @@ class FakeMapPainter extends CustomPainter {
     final roadPaint = Paint()
       ..color = const Color(0xFF5A8A5A)
       ..strokeWidth = 4;
+    canvas.drawLine(const Offset(0, 70), Offset(size.width, 60), roadPaint);
     canvas.drawLine(
-        const Offset(0, 70), Offset(size.width, 60), roadPaint);
-    canvas.drawLine(
-        Offset(size.width * 0.4, 0),
-        Offset(size.width * 0.45, size.height),
-        roadPaint);
+      Offset(size.width * 0.4, 0),
+      Offset(size.width * 0.45, size.height),
+      roadPaint,
+    );
   }
 
   @override

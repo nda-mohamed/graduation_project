@@ -1,12 +1,9 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:graduation_project/core/app_theme/AppColors.dart';
 import 'package:graduation_project/core/app_theme/app_images.dart';
@@ -30,12 +27,11 @@ class _ChatBotState extends State<ChatBot> {
   late Interpreter interpreter;
 
   final CollectionReference chatCollection = FirebaseFirestore.instance.collection('farmer_chats');
-  final String apiKey = dotenv.env['OPENAI_API_KEY'] ?? "";
+  //final String apiKey = dotenv.env['OPENAI_API_KEY'] ?? "";
 
   @override
   void initState() {
     super.initState();
-    _loadModel();
   }
 
   // اختيار صورة من المعرض
@@ -78,195 +74,7 @@ class _ChatBotState extends State<ChatBot> {
     }
   }
 
-  Future<void> _loadModel() async {
-    interpreter = await Interpreter.fromAsset(
-      'assets/models/DD/plant_disease_model_cnn.tflite',
-    );
-    print("TFLite model loaded!");
-  }
 
-  void _sendMessage() async {
-    if (_controller.text.trim().isEmpty || apiKey.isEmpty) return;
-
-    String message = _controller.text.trim();
-    _controller.clear();
-
-    await chatCollection.add({
-      'sender': 'user',
-      'text': message,
-      'timestamp': Timestamp.now(),
-    });
-
-    final typingDoc = await chatCollection.add({
-      'sender': 'bot',
-      'text': 'Typing...',
-      'timestamp': Timestamp.now(),
-    });
-
-    // لو الرسالة فيها plant/leaf → نطلب صورة
-    if (message.toLowerCase().contains("leaf") ||
-        message.toLowerCase().contains("plant") ||
-        message.toLowerCase().contains("disease")) {
-      await typingDoc.update({
-        'text': "Please upload an image of the plant 🌱",
-      });
-      _scrollToBottom();
-      return;
-    }
-
-    // 👇 الردود الخاصة بالأبلكيشن
-    String? localResponse = _getAppHelpResponse(message);
-
-    if (localResponse != null) {
-      await typingDoc.update({'text': localResponse});
-      _scrollToBottom();
-      return;
-    }
-
-    // 👇 لو مش سؤال خاص → GPT
-    final botReply = await _getGPTResponse(message);
-
-    await typingDoc.update({'text': botReply});
-    await flutterTts.speak(botReply);
-    _scrollToBottom();
-  }
-
-  Future<String> _getGPTResponse(String userMessage) async {
-    try {
-      final url = Uri.parse("https://api.openai.com/v1/chat/completions");
-
-      final response = await http
-          .post(
-            url,
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer $apiKey",
-            },
-            body: jsonEncode({
-              "model": "gpt-4.1-mini",
-              "messages": [
-                {
-                  "role": "system",
-                  "content": "You are an AI assistant for AGRINOVA app. "
-                      "Help users use the app, upload images, "
-                      "detect plant diseases, and give agricultural advice.",
-                },
-                {"role": "user", "content": userMessage},
-              ],
-              "max_tokens": 200,
-            }),
-          )
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () {
-              throw Exception("Request timed out");
-            },
-          );
-
-      print("STATUS: ${response.statusCode}");
-      print("BODY: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['choices'] != null && data['choices'].isNotEmpty) {
-          return data['choices'][0]['message']['content'].toString().trim();
-        } else {
-          return "No response from AI.";
-        }
-      } else {
-        return "Error ${response.statusCode}";
-      }
-    } catch (e) {
-      return "Exception: $e";
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-
-    if (picked != null) {
-      selectedImage = File(picked.path);
-      await chatCollection.add({
-        'sender': 'user',
-        'text': '[Image]',
-        'timestamp': Timestamp.now(),
-      });
-      _analyzeImage(selectedImage!);
-    }
-  }
-
-  Future<void> _analyzeImage(File image) async {
-    // هنا لازم تحولي الصورة للـ input المناسب للموديل
-    // resize + normalize حسب الموديل
-    var input = []; // TODO: استبدلي بالمعالجة الحقيقية
-    var output = List.filled(1 * 10, 0).reshape([1, 10]); // عدد الكلاسات
-
-    interpreter.run(input, output);
-
-    int predictedIndex = output[0].indexOf(
-      output[0].reduce((a, b) => a > b ? a : b),
-    );
-    String disease = _getDiseaseName(predictedIndex);
-
-    await chatCollection.add({
-      'sender': 'bot',
-      'text': "Detected: $disease 🌱",
-      'timestamp': Timestamp.now(),
-    });
-
-    final advice = await _getGPTResponse(
-      "Give treatment for $disease in plants",
-    );
-
-    await chatCollection.add({
-      'sender': 'bot',
-      'text': advice,
-      'timestamp': Timestamp.now(),
-    });
-
-    _scrollToBottom();
-  }
-
-  String _getDiseaseName(int index) {
-    List<String> diseases = [
-      "Early Blight",
-      "Late Blight",
-      "Healthy",
-      "Leaf Spot",
-      "Powdery Mildew",
-      // عدلي حسب الكلاسات عندك
-    ];
-    return diseases[index];
-  }
-
-  String? _getAppHelpResponse(String message) {
-    message = message.toLowerCase();
-
-    if (message.contains("how to use") || message.contains("use app")) {
-      return "📱 To use the app:\n\n"
-          "1. Ask questions in chat 💬\n"
-          "2. Upload plant images using + 📸\n"
-          "3. Detect diseases 🌱\n"
-          "4. Get treatment advice\n\n"
-          "Enjoy using AGRINOVA 💚";
-    }
-
-    if (message.contains("upload") || message.contains("image")) {
-      return "📸 To upload an image:\n\n"
-          "Click + → Choose Gallery or Camera → Select image";
-    }
-
-    if (message.contains("camera")) {
-      return "📷 You can use the camera from the + button.";
-    }
-
-    if (message.contains("chat") || message.contains("ask")) {
-      return "💬 You can ask any agricultural question!";
-    }
-
-    return null;
-  }
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -473,7 +281,7 @@ class _ChatBotState extends State<ChatBot> {
 
                         IconButton(
                           icon: Icon(Icons.send, color: AppColor.green8),
-                          onPressed: _sendMessage,
+                          onPressed: () {},
                         ),
                       ],
                     ),
