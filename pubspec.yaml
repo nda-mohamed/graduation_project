@@ -85,7 +85,6 @@ flutter:
      - assets/chatbot.png
      - assets/hugeicons_ai-idea.png
      - assets/rec.png
-     - open_ai_key.env
 
 
 

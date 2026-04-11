@@ -18,5 +18,13 @@ class AppColor {
   static const Color gray = Color(0xFFACACAC);
   static const Color gray2 = Color(0xFF989898);
   static const Color gray3 = Color(0xFF243134);
+
+
+  static const Color cardBackground = Color(0xFF1A2E1A);
+  static const Color green = Color(0xFF4CAF50);
+  static const Color greenLight = Color(0xFF81C784);
+  static const Color textSecondary = Color(0xFFAED6AE);
+  static const Color red = Color(0xFFE57373);
+
 }
 

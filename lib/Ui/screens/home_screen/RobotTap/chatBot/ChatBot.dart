@@ -114,6 +114,16 @@ class _ChatBotState extends State<ChatBot> {
       return;
     }
 
+    // 👇 الردود الخاصة بالأبلكيشن
+    String? localResponse = _getAppHelpResponse(message);
+
+    if (localResponse != null) {
+      await typingDoc.update({'text': localResponse});
+      _scrollToBottom();
+      return;
+    }
+
+    // 👇 لو مش سؤال خاص → GPT
     final botReply = await _getGPTResponse(message);
 
     await typingDoc.update({'text': botReply});
@@ -137,7 +147,9 @@ class _ChatBotState extends State<ChatBot> {
               "messages": [
                 {
                   "role": "system",
-                  "content": "You are an agricultural expert AI assistant.",
+                  "content": "You are an AI assistant for AGRINOVA app. "
+                      "Help users use the app, upload images, "
+                      "detect plant diseases, and give agricultural advice.",
                 },
                 {"role": "user", "content": userMessage},
               ],
@@ -226,6 +238,34 @@ class _ChatBotState extends State<ChatBot> {
       // عدلي حسب الكلاسات عندك
     ];
     return diseases[index];
+  }
+
+  String? _getAppHelpResponse(String message) {
+    message = message.toLowerCase();
+
+    if (message.contains("how to use") || message.contains("use app")) {
+      return "📱 To use the app:\n\n"
+          "1. Ask questions in chat 💬\n"
+          "2. Upload plant images using + 📸\n"
+          "3. Detect diseases 🌱\n"
+          "4. Get treatment advice\n\n"
+          "Enjoy using AGRINOVA 💚";
+    }
+
+    if (message.contains("upload") || message.contains("image")) {
+      return "📸 To upload an image:\n\n"
+          "Click + → Choose Gallery or Camera → Select image";
+    }
+
+    if (message.contains("camera")) {
+      return "📷 You can use the camera from the + button.";
+    }
+
+    if (message.contains("chat") || message.contains("ask")) {
+      return "💬 You can ask any agricultural question!";
+    }
+
+    return null;
   }
 
   void _scrollToBottom() {
