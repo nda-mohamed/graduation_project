@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../core/ai/plant_disease_model.dart';
+import '../../../../core/api/disease_api_service.dart';
 import '../../../../core/app_theme/AppColors.dart';
+import '../../../../core/repository/disease_repository.dart';
 import 'DetailsScreen.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -19,13 +21,11 @@ class _CameraScreenState extends State<CameraScreen>
 
   late AnimationController controller;
 
-  PlantDiseaseModel model = PlantDiseaseModel();
+  DiseaseRepository repo = DiseaseRepository(DiseaseApiService());
 
   @override
   void initState() {
     super.initState();
-
-    model.loadModel();
 
     controller = AnimationController(
       vsync: this,
@@ -36,10 +36,9 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   Future analyze() async {
-
     await Future.delayed(const Duration(seconds: 2));
 
-    var result = model.runModel(widget.image);
+    var result = await repo.detectDisease(widget.image);
 
     Navigator.pushReplacement(
       context,

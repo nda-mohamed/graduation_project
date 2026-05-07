@@ -1,14 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:speech_to_text/speech_to_text.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:graduation_project/core/app_theme/AppColors.dart';
 import 'package:graduation_project/core/app_theme/app_images.dart';
 
-import '../../DiesaeseDetectionTap/CameraScreen.dart';
+import '../../../../../core/api/chatbot/chat_provider.dart';
 
 class ChatBot extends StatefulWidget {
   const ChatBot({super.key});
@@ -18,63 +13,8 @@ class ChatBot extends StatefulWidget {
 }
 
 class _ChatBotState extends State<ChatBot> {
-  final FlutterTts flutterTts = FlutterTts();
-  final SpeechToText speech = SpeechToText();
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool _isRecording = false;
-  File? selectedImage;
-  late Interpreter interpreter;
-
-  final CollectionReference chatCollection = FirebaseFirestore.instance.collection('farmer_chats');
-  //final String apiKey = dotenv.env['OPENAI_API_KEY'] ?? "";
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  // اختيار صورة من المعرض
-  Future<void> _pickImageFromGallery() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      File image = File(pickedFile.path);
-
-      print("✅ Image selected: ${image.path}");
-
-      // فتح شاشة Scan مباشرة بعد اختيار الصورة
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => CameraScreen(image: image)),
-      );
-    } else {
-      print('No image selected.');
-    }
-  }
-
-  // فتح الكاميرا مباشرة
-  Future<void> _takePhoto() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
-    if (pickedFile != null) {
-      File image = File(pickedFile.path);
-
-      print("✅ Photo taken: ${image.path}");
-
-      // فتح شاشة Scan مباشرة بعد التقاط الصورة
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => CameraScreen(image: image)),
-      );
-    } else {
-      print('No photo taken.');
-    }
-  }
-
-
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -90,6 +30,13 @@ class _ChatBotState extends State<ChatBot> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ChatProvider>(context);
+
+    /// ✅ Auto scroll after every rebuild (important fix)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+
     return Scaffold(
       backgroundColor: AppColor.background,
 
@@ -115,18 +62,10 @@ class _ChatBotState extends State<ChatBot> {
 
       body: Column(
         children: [
+          /// 💬 CHAT
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: chatCollection.orderBy('timestamp').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final docs = snapshot.data!.docs;
-
-                if (docs.isEmpty) {
-                  return Center(
+            child: provider.messages.isEmpty
+                ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -139,9 +78,7 @@ class _ChatBotState extends State<ChatBot> {
                           ),
                           child: ClipOval(child: Image.asset(AppImage.lamp)),
                         ),
-
                         const SizedBox(height: 20),
-
                         const Text(
                           "How can I help?",
                           style: TextStyle(
@@ -152,45 +89,82 @@ class _ChatBotState extends State<ChatBot> {
                         ),
                       ],
                     ),
-                  );
-                }
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(12),
+                    itemCount:
+                        provider.messages.length + (provider.isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      /// 🟡 Loading indicator improved UX
+                      if (index == provider.messages.length &&
+                          provider.isLoading) {
+                        return const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: [
+                                SizedBox(width: 8),
+                                CircularProgressIndicator(strokeWidth: 2),
+                                SizedBox(width: 10),
+                                Text(
+                                  "AI is thinking...",
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(8),
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    final msg = docs[index];
-                    final isUser = msg['sender'] == 'user';
-                    return Align(
-                      alignment: isUser
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isUser ? AppColor.green6 : AppColor.gray3,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          msg['text'],
-                          style: TextStyle(
-                            color: isUser ? AppColor.white : AppColor.black,
+                      final msg = provider.messages[index];
+
+                      return Align(
+                        alignment: msg.isUser
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 6,
+                          ),
+                          padding: const EdgeInsets.all(14),
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.75,
+                          ),
+
+                          /// ⭐ WhatsApp style bubbles
+                          decoration: BoxDecoration(
+                            color: msg.isUser
+                                ? AppColor.green8
+                                : const Color(0xFF243134),
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(16),
+                              topRight: const Radius.circular(16),
+                              bottomLeft: Radius.circular(msg.isUser ? 16 : 0),
+                              bottomRight: Radius.circular(msg.isUser ? 0 : 16),
+                            ),
+                          ),
+
+                          child: Text(
+                            msg.text,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                      );
+                    },
+                  ),
           ),
 
           Container(height: 1, color: AppColor.white),
 
           const SizedBox(height: 12),
 
+          /// ✍️ INPUT (UNCHANGED UI)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
@@ -199,70 +173,12 @@ class _ChatBotState extends State<ChatBot> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: Color(0xFF243134),
+                      color: const Color(0xFF243134),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Color(0xFF243134), width: 1.5),
                     ),
                     child: Row(
                       children: [
-                        // زر "+" لفتح خيارات الصورة
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-                              builder: (context) => Container(
-                                padding: EdgeInsets.all(16),
-                                height: 150,
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Upload Image",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-
-                                    const SizedBox(height: 20),
-
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ElevatedButton.icon(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            _pickImageFromGallery();
-                                          },
-                                          icon: Icon(Icons.photo),
-                                          label: Text("Gallery"),
-                                        ),
-                                        ElevatedButton.icon(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            _takePhoto();
-                                          },
-                                          icon: Icon(Icons.camera_alt),
-                                          label: Text("Camera"),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            child: Icon(Icons.add, color: AppColor.green8),
-                          ),
-                        ),
+                        Icon(Icons.add, color: AppColor.green8),
 
                         const SizedBox(width: 8),
 
@@ -277,11 +193,18 @@ class _ChatBotState extends State<ChatBot> {
                           ),
                         ),
 
-                        const SizedBox(width: 8),
-
                         IconButton(
                           icon: Icon(Icons.send, color: AppColor.green8),
-                          onPressed: () {},
+
+                          /// 🟡 FIX: prevent empty messages
+                          onPressed: () async {
+                            final text = _controller.text.trim();
+                            if (text.isEmpty) return;
+
+                            _controller.clear();
+
+                            await provider.sendMessage(text);
+                          },
                         ),
                       ],
                     ),
@@ -290,33 +213,13 @@ class _ChatBotState extends State<ChatBot> {
 
                 const SizedBox(width: 16),
 
-                // زر التسجيل الصوتي
-                GestureDetector(
-                  onLongPressStart: (_) async {
-                    bool available = await speech.initialize();
-                    if (available) {
-                      setState(() => _isRecording = true);
-                      speech.listen(
-                        onResult: (result) {
-                          setState(() {
-                            _controller.text = result.recognizedWords;
-                          });
-                        },
-                      );
-                    }
-                  },
-                  onLongPressEnd: (_) {
-                    speech.stop();
-                    setState(() => _isRecording = false);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _isRecording ? AppColor.green8 : AppColor.rec,
-                    ),
-                    child: ClipOval(child: Image.asset(AppImage.rec)),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.rec,
                   ),
+                  child: ClipOval(child: Image.asset(AppImage.rec)),
                 ),
               ],
             ),

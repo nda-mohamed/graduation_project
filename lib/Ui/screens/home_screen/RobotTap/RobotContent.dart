@@ -3,6 +3,7 @@ import 'package:graduation_project/core/app_theme/app_images.dart';
 import '../../../../core/app_theme/AppColors.dart';
 import '../../../../core/widgets/robot/common_widgets/CommonWidgets.dart';
 import 'ViewDetailsScreen.dart';
+import 'chatBot/ChatBot.dart';
 
 class RobotContent extends StatelessWidget {
   const RobotContent({super.key});
@@ -27,10 +28,10 @@ class RobotContent extends StatelessWidget {
             icon: ImageIcon(AssetImage(AppImage.chatbot)),
             color: AppColor.white,
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) => ChatBot()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ChatBot()),
+              );
             },
           ),
           IconButton(

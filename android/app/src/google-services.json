@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "384637728273",
+    "project_id": "agrinova-bcbb9",
+    "storage_bucket": "agrinova-bcbb9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384637728273:android:54f68f627c6b93f88963b0",
+        "android_client_info": {
+          "package_name": "com.example.graduation_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384637728273-g29laasgh1n8t8tfu5c4b7ktebki6q8m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.graduation_project",
+            "certificate_hash": "92b2502d98764a8648abbb45954f02fc7ebc8bb8"
+          }
+        },
+        {
+          "client_id": "384637728273-32dp3aqtcp7dvjbsck20kqg04s1dk347.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd7LPITNqDWxRTWN2cNdEo-Z93ObAN7KY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384637728273-32dp3aqtcp7dvjbsck20kqg04s1dk347.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "384637728273-sgqeo87jeag3b5ijkl57f4r43apsnueq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.graduationProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
