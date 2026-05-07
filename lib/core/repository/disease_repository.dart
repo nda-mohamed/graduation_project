@@ -1,5 +1,5 @@
 import 'dart:io';
-import '../api/disease_api_service.dart';
+import '../api/disease_detection/disease_api_service.dart';
 
 class DiseaseRepository {
   final DiseaseApiService api;

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../core/ai/plant_disease_model.dart';
-import '../../../../core/api/disease_api_service.dart';
+import '../../../../core/api/disease_detection/disease_api_service.dart';
 import '../../../../core/app_theme/AppColors.dart';
 import '../../../../core/repository/disease_repository.dart';
 import 'DetailsScreen.dart';
